@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db import models
+from django.db.models.functions import Lower
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -19,6 +20,12 @@ class Category(models.Model):
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
         ordering = ['name']
+        constraints = [
+            models.UniqueConstraint(
+                Lower('name'),
+                name='category_name_ci_uniqueness'
+            ),
+        ]
 
     def __str__(self):
         return self.name
