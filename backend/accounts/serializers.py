@@ -12,25 +12,70 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     Rejects or discards any attempt to set role, is_staff, is_superuser, groups, or user_permissions.
     Always creates a STUDENT account.
     """
+    email = serializers.EmailField(
+        required=True,
+        error_messages={
+            'required': 'Email address is required.',
+            'blank': 'Email address is required.',
+            'invalid': 'Enter a valid email address.',
+        }
+    )
     password = serializers.CharField(
         write_only=True,
         required=True,
         style={'input_type': 'password'},
         help_text='User password satisfying system password policies.'
     )
-    first_name = serializers.CharField(max_length=150, required=False, allow_blank=True, default='')
-    last_name = serializers.CharField(max_length=150, required=False, allow_blank=True, default='')
+    first_name = serializers.CharField(
+        max_length=150,
+        required=True,
+        error_messages={
+            'required': 'First name is required.',
+            'blank': 'First name is required.',
+        }
+    )
+    last_name = serializers.CharField(
+        max_length=150,
+        required=False,
+        allow_blank=True,
+        default=''
+    )
 
     class Meta:
         model = User
         fields = ('id', 'email', 'password', 'first_name', 'last_name', 'role', 'created_at')
         read_only_fields = ('id', 'role', 'created_at')
 
+    def validate_first_name(self, value):
+        trimmed = value.strip()
+        if not trimmed:
+            raise serializers.ValidationError('First name is required.')
+        return trimmed
+
+    def validate_last_name(self, value):
+        if value:
+            return value.strip()
+        return ''
+
     def validate_email(self, value):
-        normalized_email = value.strip().lower()
+        cleaned_email = value.strip()
+        if not cleaned_email:
+            raise serializers.ValidationError('Email address is required.')
+
+        # University domain validation: strictly @lpu.in (case-insensitive)
+        parts = cleaned_email.rsplit('@', 1)
+        if len(parts) != 2 or not parts[0].strip():
+            raise serializers.ValidationError('Enter a valid email address.')
+
+        domain = parts[1].lower()
+        if domain != 'lpu.in':
+            raise serializers.ValidationError('Registration is restricted to university email addresses ending in @lpu.in.')
+
+        normalized_email = cleaned_email.lower()
         if User.objects.filter(email__iexact=normalized_email).exists():
             raise serializers.ValidationError('A user with this email address already exists.')
-        return value.strip()
+
+        return cleaned_email
 
     def validate_password(self, value):
         validate_password(value)

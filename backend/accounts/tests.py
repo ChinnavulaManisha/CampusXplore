@@ -255,6 +255,69 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('email', response.data)
 
+    def test_registration_missing_first_name_fails(self):
+        data = self.valid_student_data.copy()
+        del data['first_name']
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('first_name', response.data)
+
+        # Empty string test
+        data['first_name'] = ''
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('first_name', response.data)
+
+    def test_registration_whitespace_first_name_fails(self):
+        data = self.valid_student_data.copy()
+        data['first_name'] = '     '
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('first_name', response.data)
+
+    def test_registration_missing_last_name_succeeds(self):
+        data = self.valid_student_data.copy()
+        data['email'] = 'no_lastname@lpu.in'
+        del data['last_name']
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['user']['last_name'], '')
+
+    def test_registration_valid_lpu_email_succeeds(self):
+        data = self.valid_student_data.copy()
+        data['email'] = 'shakshi.sharma@lpu.in'
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['user']['email'], 'shakshi.sharma@lpu.in')
+
+    def test_registration_gmail_address_rejected(self):
+        data = self.valid_student_data.copy()
+        data['email'] = 'student@gmail.com'
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+
+    def test_registration_other_domain_rejected(self):
+        data = self.valid_student_data.copy()
+        data['email'] = 'student@yahoo.com'
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+
+    def test_registration_fake_domain_rejected(self):
+        data = self.valid_student_data.copy()
+        data['email'] = 'student@lpu.in.example.com'
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('email', response.data)
+
+    def test_registration_uppercase_domain_accepted(self):
+        data = self.valid_student_data.copy()
+        data['email'] = 'uppercase.student@LPU.IN'
+        response = self.client.post(self.register_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['user']['email'].lower(), 'uppercase.student@lpu.in')
+
     def test_registration_password_validation_failure(self):
         weak_data = self.valid_student_data.copy()
         weak_data['password'] = '123'

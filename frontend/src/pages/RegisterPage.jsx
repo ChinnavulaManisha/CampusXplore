@@ -40,11 +40,28 @@ export default function RegisterPage() {
     setFormError(null);
     clearError();
 
+    // Trim values
+    const trimmedFirstName = formData.firstName.trim();
+    const trimmedLastName = formData.lastName.trim();
+    const trimmedEmail = formData.email.trim();
+
     // Client-side validations
-    if (!formData.email.trim()) {
-      setFormError('Please provide a valid university email.');
+    if (!trimmedFirstName) {
+      setFormError('First name is required.');
       return;
     }
+    if (!trimmedEmail) {
+      setFormError('University email is required.');
+      return;
+    }
+
+    // University domain validation: strictly @lpu.in (case-insensitive)
+    const emailParts = trimmedEmail.split('@');
+    if (emailParts.length !== 2 || !emailParts[0].trim() || emailParts[1].toLowerCase() !== 'lpu.in') {
+      setFormError('Registration is restricted to university email addresses ending in @lpu.in.');
+      return;
+    }
+
     if (!formData.password) {
       setFormError('Please specify a secure password.');
       return;
@@ -61,10 +78,10 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     try {
       const response = await register({
-        email: formData.email,
+        email: trimmedEmail,
         password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        firstName: trimmedFirstName,
+        lastName: trimmedLastName,
       });
 
       setSuccessMessage(
@@ -121,12 +138,13 @@ export default function RegisterPage() {
                 placeholder="Ananya"
                 value={formData.firstName}
                 onChange={handleChange}
+                required
                 autoComplete="given-name"
               />
               <Input
                 id="lastName"
                 name="lastName"
-                label="Last Name"
+                label="Last Name (Optional)"
                 placeholder="Sharma"
                 value={formData.lastName}
                 onChange={handleChange}
@@ -139,10 +157,11 @@ export default function RegisterPage() {
               name="email"
               type="email"
               label="University Email"
-              placeholder="ananya.sharma@lpu.in"
+              placeholder="student@lpu.in"
               value={formData.email}
               onChange={handleChange}
               required
+              helperText="Must be your official @lpu.in email"
               autoComplete="email"
             />
 
