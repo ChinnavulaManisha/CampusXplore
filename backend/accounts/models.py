@@ -1,10 +1,12 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.db.models.functions import Lower
 from django.utils.translation import gettext_lazy as _
 
 
 class Role(models.TextChoices):
     STUDENT = 'STUDENT', _('Student')
+    FACULTY = 'FACULTY', _('Faculty')
     ADMIN = 'ADMIN', _('Admin')
 
 
@@ -74,6 +76,12 @@ class User(AbstractUser):
         ordering = ['-created_at']
         verbose_name = _('User')
         verbose_name_plural = _('Users')
+        constraints = [
+            models.UniqueConstraint(
+                Lower('email'),
+                name='user_email_ci_uniqueness'
+            ),
+        ]
 
     def __str__(self):
         return f"{self.email} ({self.role})"
