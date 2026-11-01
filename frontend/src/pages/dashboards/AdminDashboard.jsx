@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Building2, Layers, AlertCircle, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Building2, Layers, AlertCircle, ArrowRight, AlertTriangle } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import facilityService from '../../services/facilityService';
 import Badge from '../../components/common/Badge';
 import Spinner from '../../components/common/Spinner';
+import ReportManagementSection from '../../components/reports/ReportManagementSection';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -53,7 +54,15 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <a
+            href="#admin-reports-management"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition-colors shadow-xs"
+          >
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
+            <span>Manage Reports</span>
+          </a>
+
           <Link
             to="/facilities"
             className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm transition-colors shadow-xs"
@@ -119,6 +128,15 @@ export default function AdminDashboard() {
             </Link>
           </div>
         </div>
+      </div>
+
+      {/* Campus Issue Reports & Incident Management Section */}
+      <div id="admin-reports-management">
+        <ReportManagementSection
+          role="ADMIN"
+          title="Campus Issue Reports & Incident Management"
+          description="Master administrator control center to inspect, filter, search, transition operational statuses, or permanently delete issue reports across all university facilities."
+        />
       </div>
     </div>
   );

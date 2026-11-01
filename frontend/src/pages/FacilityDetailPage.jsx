@@ -105,11 +105,23 @@ export default function FacilityDetailPage() {
               {facility.category?.name || 'Campus Spot'}
             </span>
 
-            {facility.is_active ? (
-              <Badge variant="success" size="sm">Active Facility</Badge>
-            ) : (
-              <Badge variant="warning" size="sm">Inactive (Soft-Deleted)</Badge>
-            )}
+            <div className="flex items-center gap-2">
+              {facility.is_active ? (
+                <Badge variant="success" size="sm">Active Facility</Badge>
+              ) : (
+                <Badge variant="warning" size="sm">Inactive (Soft-Deleted)</Badge>
+              )}
+              {facility.is_active && (
+                <Link
+                  to={`/reports/new?facility=${facility.id}`}
+                  state={{ fromFacility: facility.id }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/30 transition-colors"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Report Issue</span>
+                </Link>
+              )}
+            </div>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -214,6 +226,29 @@ export default function FacilityDetailPage() {
               </div>
             )}
           </div>
+
+          {/* Facility Issue Reporting Action Banner */}
+          {facility.is_active && (
+            <div className="p-4 sm:p-5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span>Observed a problem with this facility?</span>
+                </h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Help keep campus facilities operating smoothly. Submit a maintenance, cleanliness, water, electrical, or equipment report.
+                </p>
+              </div>
+              <Link
+                to={`/reports/new?facility=${facility.id}`}
+                state={{ fromFacility: facility.id }}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-xs transition-colors shrink-0"
+              >
+                <AlertTriangle className="w-3.5 h-3.5" />
+                <span>Report Issue</span>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

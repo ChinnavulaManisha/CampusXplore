@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, Compass, ArrowRight, BookOpen, Layers } from 'lucide-react';
+import { Building2, Compass, ArrowRight, BookOpen, Layers, AlertTriangle } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import facilityService from '../../services/facilityService';
 import Badge from '../../components/common/Badge';
@@ -53,17 +53,27 @@ export default function StudentDashboard() {
           </p>
         </div>
 
-        <Link
-          to="/facilities"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm transition-colors shadow-xs"
-        >
-          <Building2 className="w-4 h-4" />
-          <span>Browse Facilities</span>
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/reports"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm transition-colors shadow-xs"
+          >
+            <AlertTriangle className="w-4 h-4 text-amber-500" />
+            <span>My Reported Issues</span>
+          </Link>
+
+          <Link
+            to="/facilities"
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm transition-colors shadow-xs"
+          >
+            <Building2 className="w-4 h-4" />
+            <span>Browse Facilities</span>
+          </Link>
+        </div>
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
             <Building2 className="w-5 h-5" />
@@ -112,6 +122,23 @@ export default function StudentDashboard() {
           >
             <span>Explore Campus Map</span>
             <span>&rarr;</span>
+          </Link>
+        </div>
+
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2">
+          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
+            <AlertTriangle className="w-5 h-5" />
+          </div>
+          <h3 className="text-sm font-semibold text-slate-700">Reported Issues</h3>
+          <p className="text-xs text-slate-500 leading-relaxed">
+            Track status updates, inspection progress, and resolution history for your reports.
+          </p>
+          <Link
+            to="/reports"
+            className="inline-flex items-center text-xs font-semibold text-amber-600 hover:text-amber-700 pt-1"
+          >
+            <span>View my reports</span>
+            <ArrowRight className="w-3.5 h-3.5 ml-1" />
           </Link>
         </div>
       </div>

@@ -22,6 +22,11 @@ import FacilitiesPage from './pages/FacilitiesPage';
 import FacilityDetailPage from './pages/FacilityDetailPage';
 import CampusMapPage from './pages/CampusMapPage';
 
+// Report Pages
+import ReportIssuePage from './pages/ReportIssuePage';
+import StudentReportsPage from './pages/StudentReportsPage';
+import ReportDetailPage from './pages/ReportDetailPage';
+
 // Dashboards
 import DashboardRedirect from './pages/dashboards/DashboardRedirect';
 import StudentDashboard from './pages/dashboards/StudentDashboard';
@@ -49,6 +54,9 @@ function App() {
               <Route path="/facilities" element={<FacilitiesPage />} />
               <Route path="/facilities/:id" element={<FacilityDetailPage />} />
               <Route path="/map" element={<CampusMapPage />} />
+              <Route path="/reports/new" element={<ReportIssuePage />} />
+              <Route path="/reports" element={<StudentReportsPage />} />
+              <Route path="/reports/:id" element={<ReportDetailPage />} />
               <Route path="/dashboard" element={<DashboardRedirect />} />
             </Route>
 

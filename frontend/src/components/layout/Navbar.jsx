@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Compass, Menu, X, LogOut, User as UserIcon, Building2, LayoutDashboard, Map } from 'lucide-react';
+import { Compass, Menu, X, LogOut, User as UserIcon, Building2, LayoutDashboard, Map, AlertTriangle } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import Badge from '../common/Badge';
 
@@ -75,6 +75,17 @@ export default function Navbar() {
                 >
                   <Map className="w-4 h-4" />
                   Campus Map
+                </Link>
+                <Link
+                  to="/reports"
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    location.pathname.startsWith('/reports')
+                      ? 'bg-slate-800 text-indigo-400'
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  }`}
+                >
+                  <AlertTriangle className="w-4 h-4" />
+                  Reports
                 </Link>
                 <Link
                   to="/dashboard"
@@ -175,6 +186,13 @@ export default function Navbar() {
                   className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
                 >
                   Campus Map
+                </Link>
+                <Link
+                  to="/reports"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-3 py-2 rounded-md text-base font-medium text-slate-200 hover:bg-slate-800"
+                >
+                  Reports
                 </Link>
                 <Link
                   to="/dashboard"

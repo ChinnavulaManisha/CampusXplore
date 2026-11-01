@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Building2, GraduationCap, ArrowRight, Layers } from 'lucide-react';
+import { Building2, GraduationCap, ArrowRight, Layers, AlertTriangle } from 'lucide-react';
 import useAuth from '../../hooks/useAuth';
 import facilityService from '../../services/facilityService';
 import Badge from '../../components/common/Badge';
 import Spinner from '../../components/common/Spinner';
+import ReportManagementSection from '../../components/reports/ReportManagementSection';
 
 export default function FacultyDashboard() {
   const { user } = useAuth();
@@ -95,17 +96,30 @@ export default function FacultyDashboard() {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2 sm:col-span-2 lg:col-span-1">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-            <Building2 className="w-5 h-5" />
+          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600">
+            <AlertTriangle className="w-5 h-5" />
           </div>
           <h3 className="text-sm font-semibold text-slate-700">Facility Operations</h3>
           <p className="text-xs text-slate-500 leading-relaxed">
-            Campus issue reporting and maintenance tracking will activate in Phase 9.
+            Review reported maintenance issues, inspect tickets, and dispatch repairs.
           </p>
-          <span className="inline-block text-[11px] font-medium text-slate-400 pt-1">
-            Phase 9 Feature
-          </span>
+          <a
+            href="#reports-management"
+            className="inline-flex items-center text-xs font-semibold text-amber-600 hover:text-amber-700 pt-1"
+          >
+            <span>Manage reports</span>
+            <ArrowRight className="w-3.5 h-3.5 ml-1" />
+          </a>
         </div>
+      </div>
+
+      {/* Campus Issue Reports Management Section */}
+      <div id="reports-management">
+        <ReportManagementSection
+          role="FACULTY"
+          title="Campus Issue Reports Management"
+          description="Inspect submitted campus reports across all university facilities, review reported details, and update operational status."
+        />
       </div>
 
       {/* Facilities Preview */}
