@@ -138,3 +138,52 @@ class SettingsSecurityConfigurationTests(SimpleTestCase):
         )
         res = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True, cwd=str(settings.BASE_DIR))
         self.assertEqual(res.returncode, 0, msg=f"Fallback occurred unexpectedly: {res.stderr}")
+
+
+class CorsConfigurationAndPreflightRegressionTests(SimpleTestCase):
+    def test_production_origins_configured(self):
+        self.assertIn('https://campusxplore-app.vercel.app', settings.CORS_ALLOWED_ORIGINS)
+        self.assertIn('https://campusxplore.vercel.app', settings.CORS_ALLOWED_ORIGINS)
+        self.assertIn('http://localhost:5173', settings.CORS_ALLOWED_ORIGINS)
+        self.assertIn('https://campusxplore-app.vercel.app', settings.CSRF_TRUSTED_ORIGINS)
+        # Ensure security: wildcards or allow-all must never be used
+        self.assertFalse(getattr(settings, 'CORS_ALLOW_ALL_ORIGINS', False))
+
+    def test_cors_preflight_for_production_origin_on_api_path(self):
+        client = APIClient()
+        response = client.options(
+            '/api/auth/register/',
+            HTTP_ORIGIN='https://campusxplore-app.vercel.app',
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD='POST',
+            HTTP_ACCESS_CONTROL_REQUEST_HEADERS='content-type',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.get('access-control-allow-origin'),
+            'https://campusxplore-app.vercel.app'
+        )
+        self.assertIn('POST', response.get('access-control-allow-methods', ''))
+
+    def test_cors_preflight_for_production_origin_on_direct_auth_path(self):
+        client = APIClient()
+        response = client.options(
+            '/auth/register/',
+            HTTP_ORIGIN='https://campusxplore-app.vercel.app',
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD='POST',
+            HTTP_ACCESS_CONTROL_REQUEST_HEADERS='content-type',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.get('access-control-allow-origin'),
+            'https://campusxplore-app.vercel.app'
+        )
+        self.assertIn('POST', response.get('access-control-allow-methods', ''))
+
+    def test_cors_disallows_unauthorized_origin(self):
+        client = APIClient()
+        response = client.options(
+            '/api/auth/register/',
+            HTTP_ORIGIN='https://unauthorized-phishing-site.example.com',
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD='POST',
+        )
+        self.assertNotIn('access-control-allow-origin', response)

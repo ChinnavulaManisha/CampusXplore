@@ -131,14 +131,28 @@ else:
 # CORS & CSRF Configuration
 # https://github.com/adamchainz/django-cors-headers
 
-CORS_ALLOWED_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get(
-        'CORS_ALLOWED_ORIGINS',
-        'http://localhost:5173,http://127.0.0.1:5173,https://campusxplore.vercel.app'
-    ).split(',')
-    if origin.strip()
+DEFAULT_CORS_ALLOWED_ORIGINS = [
+    'https://campusxplore-app.vercel.app',
+    'https://campusxplore.vercel.app',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
 ]
+
+env_cors = os.environ.get('CORS_ALLOWED_ORIGINS', '')
+if env_cors.strip():
+    CORS_ALLOWED_ORIGINS = [
+        origin.strip()
+        for origin in env_cors.split(',')
+        if origin.strip()
+    ]
+    # Ensure production Vercel app and local dev origins are always permitted alongside custom env origins
+    for origin in DEFAULT_CORS_ALLOWED_ORIGINS:
+        if origin not in CORS_ALLOWED_ORIGINS:
+            CORS_ALLOWED_ORIGINS.append(origin)
+else:
+    CORS_ALLOWED_ORIGINS = list(DEFAULT_CORS_ALLOWED_ORIGINS)
+
+CORS_ALLOW_CREDENTIALS = True
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
