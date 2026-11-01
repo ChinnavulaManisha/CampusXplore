@@ -171,3 +171,26 @@ class LogoutSerializer(serializers.Serializer):
             self.refresh_token.blacklist()
         except TokenError:
             raise serializers.ValidationError({'detail': 'Token is invalid or expired.'})
+
+
+class StudentAdminSerializer(serializers.ModelSerializer):
+    """
+    Admin serializer for student account representation with annotated issue report count.
+    Never exposes passwords, hashes, or sensitive internal flags.
+    """
+    report_count = serializers.IntegerField(read_only=True, default=0)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'is_active',
+            'role',
+            'created_at',
+            'date_joined',
+            'report_count',
+        )
+        read_only_fields = fields

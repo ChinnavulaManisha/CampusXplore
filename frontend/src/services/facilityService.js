@@ -96,6 +96,54 @@ export const facilityService = {
     const response = await api.get(`/categories/${categoryId}/facilities/`, { params });
     return response.data;
   },
+
+  /**
+   * Create a new campus facility (Admin only).
+   */
+  async createFacility(facilityData) {
+    const response = await api.post('/facilities/', facilityData);
+    return response.data;
+  },
+
+  /**
+   * Update an existing facility (Admin only).
+   */
+  async updateFacility(id, facilityData) {
+    const response = await api.patch(`/facilities/${id}/`, facilityData);
+    return response.data;
+  },
+
+  /**
+   * Soft-delete / deactivate a facility (Admin only).
+   */
+  async deleteFacility(id) {
+    const response = await api.delete(`/facilities/${id}/`);
+    return response.data;
+  },
+
+  /**
+   * Create a new facility category (Admin only).
+   */
+  async createCategory(categoryData) {
+    const response = await api.post('/categories/', categoryData);
+    return response.data;
+  },
+
+  /**
+   * Update an existing category (Admin only).
+   */
+  async updateCategory(id, categoryData) {
+    const response = await api.patch(`/categories/${id}/`, categoryData);
+    return response.data;
+  },
+
+  /**
+   * Delete a facility category (Admin only).
+   */
+  async deleteCategory(id) {
+    const response = await api.delete(`/categories/${id}/`);
+    return response.data;
+  },
 };
 
 export default facilityService;

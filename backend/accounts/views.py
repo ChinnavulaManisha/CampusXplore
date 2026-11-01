@@ -1,12 +1,17 @@
-from rest_framework import generics, status, views
+from django.db.models import Count
+from rest_framework import generics, status, views, filters
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from accounts.models import User, Role
+from accounts.permissions import IsAdminRole
+from accounts.pagination import StudentPagination
 from accounts.serializers import (
     UserRegistrationSerializer,
     UserLoginSerializer,
     UserProfileSerializer,
     LogoutSerializer,
+    StudentAdminSerializer,
 )
 
 
@@ -98,3 +103,22 @@ class UserProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class StudentListView(generics.ListAPIView):
+    """
+    Admin-only paginated list of registered student accounts.
+    Includes search by email, first_name, last_name, and annotated report count.
+    """
+    permission_classes = [IsAuthenticated, IsAdminRole]
+    serializer_class = StudentAdminSerializer
+    pagination_class = StudentPagination
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['email', 'first_name', 'last_name']
+    ordering_fields = ['created_at', 'date_joined', 'email', 'first_name', 'last_name']
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        return User.objects.filter(role=Role.STUDENT).annotate(
+            report_count=Count('issue_reports')
+        )

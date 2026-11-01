@@ -711,3 +711,106 @@ class CaseInsensitiveEmailUniqueConstraintTests(TestCase):
                     email='CASINGTEST@lpu.in',
                     role=Role.STUDENT
                 ).save()
+
+
+class StudentListAPITests(APITestCase):
+    """
+    Tests for admin-only student listing endpoint: GET /api/auth/students/.
+    Verifies authentication, RBAC authorization, pagination, search, and report count.
+    """
+    def setUp(self):
+        self.admin = User.objects.create_superuser(
+            email='admin@lpu.in',
+            password='AdminPassword123!',
+            first_name='Admin',
+            last_name='User'
+        )
+        self.faculty = User.objects.create_user(
+            email='faculty@lpu.in',
+            password='FacultyPassword123!',
+            first_name='Faculty',
+            last_name='Member'
+        )
+        self.faculty.role = Role.FACULTY
+        self.faculty.save()
+
+        self.student_1 = User.objects.create_user(
+            email='aarav.sharma@lpu.in',
+            password='Student1Password!',
+            first_name='Aarav',
+            last_name='Sharma'
+        )
+        self.student_2 = User.objects.create_user(
+            email='diya.patel@lpu.in',
+            password='Student2Password!',
+            first_name='Diya',
+            last_name='Patel'
+        )
+        self.url = '/api/auth/students/'
+
+    def test_unauthenticated_request_denied(self):
+        res = self.client.get(self.url)
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_student_request_forbidden(self):
+        self.client.force_authenticate(user=self.student_1)
+        res = self.client.get(self.url)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_faculty_request_forbidden(self):
+        self.client.force_authenticate(user=self.faculty)
+        res = self.client.get(self.url)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_admin_can_list_students_with_pagination(self):
+        self.client.force_authenticate(user=self.admin)
+        res = self.client.get(self.url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('count', res.data)
+        self.assertIn('results', res.data)
+        self.assertEqual(res.data['count'], 2)
+
+        returned_emails = [s['email'] for s in res.data['results']]
+        self.assertIn('aarav.sharma@lpu.in', returned_emails)
+        self.assertIn('diya.patel@lpu.in', returned_emails)
+        # Verify faculty and admin are strictly excluded
+        self.assertNotIn('faculty@lpu.in', returned_emails)
+        self.assertNotIn('admin@lpu.in', returned_emails)
+
+    def test_student_search_filter(self):
+        self.client.force_authenticate(user=self.admin)
+        # Search by first name
+        res = self.client.get(f'{self.url}?search=Diya')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['count'], 1)
+        self.assertEqual(res.data['results'][0]['email'], 'diya.patel@lpu.in')
+
+        # Search by email domain/prefix
+        res_email = self.client.get(f'{self.url}?search=aarav.sharma')
+        self.assertEqual(res_email.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_email.data['count'], 1)
+        self.assertEqual(res_email.data['results'][0]['email'], 'aarav.sharma@lpu.in')
+
+    def test_student_report_count_annotation(self):
+        from facilities.models import Category, Facility
+        from reports.models import IssueReport, IssueType
+
+        cat = Category.objects.create(name='Academic Lab')
+        fac = Facility.objects.create(name='Physics Lab', category=cat, building='Block 38')
+        IssueReport.objects.create(
+            user=self.student_1,
+            facility=fac,
+            title='Broken Galvanometer',
+            description='Galvanometer coil burnt out during experiment.',
+            issue_type=IssueType.EQUIPMENT
+        )
+
+        self.client.force_authenticate(user=self.admin)
+        res = self.client.get(self.url)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+        for s in res.data['results']:
+            if s['email'] == 'aarav.sharma@lpu.in':
+                self.assertEqual(s['report_count'], 1)
+            elif s['email'] == 'diya.patel@lpu.in':
+                self.assertEqual(s['report_count'], 0)
