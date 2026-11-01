@@ -101,20 +101,52 @@ export const AuthProvider = ({ children }) => {
       return data;
     } catch (err) {
       const data = err.response?.data;
-      let errorMsg = 'Registration failed. Please check your input.';
+      const fallbackMsg = 'Registration failed. Please check your input.';
+
+      // Helper to defensively extract the first non-empty string from a value or array
+      const extractMessage = (val) => {
+        if (typeof val === 'string' && val.trim()) {
+          return val.trim();
+        }
+        if (Array.isArray(val)) {
+          for (const item of val) {
+            if (typeof item === 'string' && item.trim()) {
+              return item.trim();
+            }
+          }
+        }
+        return null;
+      };
+
+      let errorMsg = null;
       if (data) {
-        if (typeof data === 'string') {
-          errorMsg = data;
-        } else if (data.email) {
-          errorMsg = Array.isArray(data.email) ? data.email[0] : data.email;
-        } else if (data.password) {
-          errorMsg = Array.isArray(data.password) ? data.password[0] : data.password;
-        } else if (data.detail) {
-          errorMsg = data.detail;
+        if (typeof data === 'string' && data.trim()) {
+          errorMsg = data.trim();
+        } else if (typeof data === 'object') {
+          // Check standard DRF fields according to error precedence
+          errorMsg =
+            extractMessage(data.first_name) ||
+            extractMessage(data.email) ||
+            extractMessage(data.password) ||
+            extractMessage(data.non_field_errors) ||
+            extractMessage(data.detail);
+
+          // If no message found in expected fields, check any unexpected field errors
+          if (!errorMsg) {
+            for (const key of Object.keys(data)) {
+              const candidate = extractMessage(data[key]);
+              if (candidate) {
+                errorMsg = candidate;
+                break;
+              }
+            }
+          }
         }
       }
-      setAuthError(errorMsg);
-      throw new Error(errorMsg);
+
+      const finalError = errorMsg || fallbackMsg;
+      setAuthError(finalError);
+      throw new Error(finalError);
     }
   }, []);
 

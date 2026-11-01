@@ -29,6 +29,19 @@ export default function FacilitiesPage() {
   const [searchInput, setSearchInput] = useState(searchKeyword);
   const [buildingInput, setBuildingInput] = useState(buildingFilter);
 
+  // Synchronize input fields with URL search parameters (browser navigation, resets, external links)
+  const [prevSearchKeyword, setPrevSearchKeyword] = useState(searchKeyword);
+  const [prevBuildingFilter, setPrevBuildingFilter] = useState(buildingFilter);
+
+  if (prevSearchKeyword !== searchKeyword) {
+    setPrevSearchKeyword(searchKeyword);
+    setSearchInput(searchKeyword);
+  }
+  if (prevBuildingFilter !== buildingFilter) {
+    setPrevBuildingFilter(buildingFilter);
+    setBuildingInput(buildingFilter);
+  }
+
   // Load categories taxonomy
   useEffect(() => {
     let isMounted = true;
@@ -212,14 +225,17 @@ export default function FacilitiesPage() {
               onClick={() => updateFilter('category', '')}
             />
 
-            {categories.map((cat) => (
-              <CategoryPill
-                key={cat.id}
-                category={cat}
-                isSelected={selectedCategory === String(cat.id) || selectedCategory === cat.name}
-                onClick={() => updateFilter('category', String(cat.id))}
-              />
-            ))}
+            {categories.map((cat) => {
+              const isSelected = selectedCategory === String(cat.id) || selectedCategory === cat.name;
+              return (
+                <CategoryPill
+                  key={cat.id}
+                  category={cat}
+                  isSelected={isSelected}
+                  onClick={() => updateFilter('category', isSelected ? '' : String(cat.id))}
+                />
+              );
+            })}
           </div>
         )}
       </div>
