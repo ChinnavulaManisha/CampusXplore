@@ -22,6 +22,8 @@ frontend/dist-ssr/
 dist/
 dist-ssr/
 build/
+backend/staticfiles/
+staticfiles/
 *.egg-info/
 *.zip
 

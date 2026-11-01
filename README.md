@@ -205,3 +205,86 @@ npm run build
 ### Frontend Application
 - **URL:** `http://localhost:5173`
 - Displays the CampusXplore header with Lovely Professional University branding and dynamic API connection status.
+
+---
+
+## 8. Production Deployment Guide
+
+### Architecture Overview
+CampusXplore follows a modern decoupled architecture:
+- **Backend:** Django 5.2 REST Framework API serving endpoints under `/api/` with JWT authentication and PostgreSQL storage.
+- **Frontend:** Vite-bundled React Single Page Application (SPA) compiled to static assets (`dist/`).
+- **Database:** Managed PostgreSQL 18 instance.
+
+---
+
+### Production Environment Variables
+
+#### Backend (`backend/.env`)
+Ensure all sensitive configuration variables are supplied directly through your production platform's environment settings:
+
+| Variable Name | Purpose / Description | Required |
+|---|---|---|
+| `DEBUG` | Set strictly to `False` in production | Yes |
+| `SECRET_KEY` | Cryptographic key for session signing and internal cryptographic operations | Yes |
+| `JWT_SIGNING_KEY` | Dedicated HMAC secret for JWT token issuance and verification | Yes |
+| `ALLOWED_HOSTS` | Comma-separated list of allowed hostnames/domains (e.g. `api.yourdomain.com,10.0.0.1`) | Yes |
+| `DB_NAME` | Production PostgreSQL database name | Yes |
+| `DB_USER` | Production database user | Yes |
+| `DB_PASSWORD` | Production database user password | Yes |
+| `DB_HOST` | Production database host/IP | Yes |
+| `DB_PORT` | Production database port (typically `5432`) | Yes |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated list of production frontend origins (e.g. `https://yourdomain.com`) | Yes |
+| `JWT_ACCESS_MINUTES` | Access token lifespan in minutes (default: `30`) | No |
+| `JWT_REFRESH_DAYS` | Refresh token lifespan in days (default: `7`) | No |
+
+> [!IMPORTANT]
+> Never commit `.env` files or expose actual secret key values in source control or documentation.
+
+#### Frontend (`frontend/.env`)
+Supplied at build time for the Vite bundling pipeline:
+
+| Variable Name | Purpose / Description | Required |
+|---|---|---|
+| `VITE_API_BASE_URL` | Public base URL of the production Django REST API (e.g. `https://api.yourdomain.com/api`) | Yes |
+
+---
+
+### Backend Deployment Steps (Docker, Linux VPS, PaaS)
+
+1. **Install Dependencies:**
+   ```bash
+   pip install -r requirements.txt gunicorn
+   ```
+
+2. **Apply Database Migrations:**
+   ```bash
+   python manage.py migrate
+   ```
+
+3. **Collect Static Files:**
+   ```bash
+   python manage.py collectstatic --noinput
+   ```
+
+4. **Launch Application Server:**
+   ```bash
+   gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 3
+   ```
+
+---
+
+### Frontend Deployment Steps (Vercel, Netlify, Cloudflare Pages, S3/CloudFront)
+
+1. **Install Dependencies & Compile Production Bundle:**
+   ```bash
+   cd frontend
+   npm ci
+   npm run build
+   ```
+
+2. **Publish Directory:**
+   - Deploy the generated `dist/` directory.
+
+3. **Configure SPA Rewrite Routing:**
+   - Ensure the hosting provider rewrites all non-file route requests (`/*`) to `/index.html` to support client-side React Router navigation without 404 errors.
