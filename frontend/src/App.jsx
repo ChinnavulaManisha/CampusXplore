@@ -20,6 +20,7 @@ import RoleRoute from './components/auth/RoleRoute';
 // Facility Pages
 import FacilitiesPage from './pages/FacilitiesPage';
 import FacilityDetailPage from './pages/FacilityDetailPage';
+import CampusMapPage from './pages/CampusMapPage';
 
 // Dashboards
 import DashboardRedirect from './pages/dashboards/DashboardRedirect';
@@ -47,6 +48,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/facilities" element={<FacilitiesPage />} />
               <Route path="/facilities/:id" element={<FacilityDetailPage />} />
+              <Route path="/map" element={<CampusMapPage />} />
               <Route path="/dashboard" element={<DashboardRedirect />} />
             </Route>
 

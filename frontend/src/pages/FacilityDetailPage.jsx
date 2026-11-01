@@ -1,16 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, MapPin, Clock, Phone, Building2, Navigation, AlertTriangle } from 'lucide-react';
+import { useParams, Link, useLocation } from 'react-router-dom';
+import { ArrowLeft, MapPin, Clock, Phone, Building2, Navigation, AlertTriangle, Map as MapIcon } from 'lucide-react';
 import facilityService from '../services/facilityService';
+import CampusMap from '../components/map/CampusMap';
 import Badge from '../components/common/Badge';
 import Spinner from '../components/common/Spinner';
 import Button from '../components/common/Button';
 
 export default function FacilityDetailPage() {
   const { id } = useParams();
+  const location = useLocation();
+  const cameFromMap = location.state?.fromMap;
+  const mapSearch = location.state?.mapSearch;
   const [facility, setFacility] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Restore complete map query while preserving facility highlight
+  const returnToMapUrl = React.useMemo(() => {
+    if (!cameFromMap) return '/facilities';
+    const params = new URLSearchParams(mapSearch ? mapSearch.replace(/^\?/, '') : '');
+    if (facility?.id) {
+      params.set('facility', String(facility.id));
+    }
+    const qs = params.toString();
+    return qs ? `/map?${qs}` : '/map';
+  }, [cameFromMap, mapSearch, facility]);
 
   useEffect(() => {
     let isMounted = true;
@@ -73,11 +88,11 @@ export default function FacilityDetailPage() {
       {/* Back button */}
       <div>
         <Link
-          to="/facilities"
+          to={returnToMapUrl}
           className="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-indigo-600 transition-colors gap-1.5"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>Back to Directory</span>
+          <span>{cameFromMap ? 'Back to Campus Map' : 'Back to Directory'}</span>
         </Link>
       </div>
 
@@ -140,33 +155,58 @@ export default function FacilityDetailPage() {
             </div>
           </div>
 
-          {/* Geographical Coordinates */}
-          <div className="space-y-3 pt-2">
-            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-              <Navigation className="w-4 h-4 text-indigo-600" />
-              <span>Campus Map Positioning</span>
-            </h3>
+          {/* Geographical Coordinates & Mini-Map */}
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Navigation className="w-4 h-4 text-indigo-600" />
+                <span>Campus Map Positioning</span>
+              </h3>
+              {facility.latitude && facility.longitude && (
+                <Link
+                  to={`/map?facility=${facility.id}`}
+                  className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                >
+                  <MapIcon className="w-3.5 h-3.5" />
+                  <span>View on Interactive Map</span>
+                </Link>
+              )}
+            </div>
 
             {facility.latitude && facility.longitude ? (
-              <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <div className="space-y-1">
-                  <div className="font-semibold text-slate-900">
-                    GPS Coordinates: {facility.latitude}, {facility.longitude}
-                  </div>
-                  <div className="text-slate-500">
-                    Validated within campus boundaries (-90° to 90° Lat, -180° to 180° Lon).
-                  </div>
+              <div className="space-y-3">
+                {/* Embedded Mini-Map */}
+                <div className="rounded-xl overflow-hidden border border-slate-200 shadow-xs">
+                  <CampusMap
+                    facilities={[facility]}
+                    isMiniMap={true}
+                    height="260px"
+                    initialCenter={[parseFloat(facility.latitude), parseFloat(facility.longitude)]}
+                    initialZoom={17}
+                  />
                 </div>
 
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${facility.latitude},${facility.longitude}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-indigo-200 text-indigo-700 font-semibold shadow-2xs hover:bg-indigo-50"
-                >
-                  <MapPin className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>External Maps</span>
-                </a>
+                {/* Numerical GPS Details and Google Maps Link */}
+                <div className="p-4 rounded-xl bg-indigo-50/50 border border-indigo-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="space-y-1">
+                    <div className="font-semibold text-slate-900">
+                      GPS Coordinates: {facility.latitude}, {facility.longitude}
+                    </div>
+                    <div className="text-slate-500">
+                      Validated within campus boundaries (-90° to 90° Lat, -180° to 180° Lon).
+                    </div>
+                  </div>
+
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${facility.latitude},${facility.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-indigo-200 text-indigo-700 font-semibold shadow-2xs hover:bg-indigo-50"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>External Maps</span>
+                  </a>
+                </div>
               </div>
             ) : (
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-500">

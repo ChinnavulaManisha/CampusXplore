@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Search, Building2, Filter, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Search, Building2, Filter, ChevronLeft, ChevronRight, RotateCcw, LayoutGrid, Map as MapIcon } from 'lucide-react';
 import useAuth from '../hooks/useAuth';
 import facilityService from '../services/facilityService';
 import FacilityCard from '../components/facilities/FacilityCard';
@@ -12,6 +12,7 @@ import Alert from '../components/common/Alert';
 export default function FacilitiesPage() {
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   const [facilities, setFacilities] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -133,14 +134,40 @@ export default function FacilitiesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 text-left w-full">
-      {/* Page Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-          Campus Facilities Directory
-        </h1>
-        <p className="text-sm text-slate-500">
-          Search and discover buildings, service points, and study halls across Lovely Professional University.
-        </p>
+      {/* Page Header with Grid/Map View Toggle */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Campus Facilities Directory
+          </h1>
+          <p className="text-sm text-slate-500">
+            Search and discover buildings, service points, and study halls across Lovely Professional University.
+          </p>
+        </div>
+
+        {/* View Switcher */}
+        <div className="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 self-start sm:self-auto shrink-0">
+          <button
+            type="button"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white text-indigo-600 shadow-xs border border-slate-200/60 cursor-default"
+            aria-current="page"
+          >
+            <LayoutGrid className="w-4 h-4" />
+            <span>Grid View</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const paramsString = searchParams.toString();
+              navigate(paramsString ? `/map?${paramsString}` : '/map');
+            }}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all cursor-pointer"
+            title="Switch to Interactive Map"
+          >
+            <MapIcon className="w-4 h-4" />
+            <span>Map View</span>
+          </button>
+        </div>
       </div>
 
       {error && <Alert type="error" message={error} onClose={() => setError(null)} />}

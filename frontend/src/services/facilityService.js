@@ -21,6 +21,50 @@ export const facilityService = {
   },
 
   /**
+   * Fetch all facilities matching parameters across all pages sequentially.
+   * Uses page_size=100.
+   * Returns { facilities: [...], totalCount: number, isComplete: boolean }
+   * If any subsequent page fails, returns what has been fetched so far with isComplete: false.
+   */
+  async getAllFacilities(params = {}) {
+    const pageSize = 100;
+    let allFacilities = [];
+    let isComplete = true;
+    let totalCount = 0;
+
+    try {
+      const firstPage = await this.getFacilities({ ...params, page: 1, pageSize });
+      totalCount = firstPage.count ?? 0;
+      allFacilities = [...(firstPage.results || [])];
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      for (let p = 2; p <= totalPages; p++) {
+        try {
+          const nextPage = await this.getFacilities({ ...params, page: p, pageSize });
+          if (nextPage?.results?.length) {
+            allFacilities.push(...nextPage.results);
+          }
+        } catch (pageError) {
+          console.error(`Failed to fetch facilities page ${p}:`, pageError);
+          isComplete = false;
+          break; // Stop fetching subsequent pages, keep partial results
+        }
+      }
+    } catch (initialError) {
+      console.error('Failed to initiate facilities fetch:', initialError);
+      throw initialError;
+    }
+
+    return {
+      facilities: allFacilities,
+      totalCount,
+      isComplete,
+    };
+  },
+
+
+  /**
    * Fetch detailed information for a single facility by ID.
    */
   async getFacilityById(id) {

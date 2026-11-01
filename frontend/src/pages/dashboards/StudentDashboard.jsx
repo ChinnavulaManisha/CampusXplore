@@ -106,9 +106,13 @@ export default function StudentDashboard() {
           <p className="text-xs text-slate-500 leading-relaxed">
             Interactive GPS navigation and issue reporting are planned in subsequent phases.
           </p>
-          <span className="inline-block text-[11px] font-medium text-slate-400 pt-1">
-            Coming in Phases 6–9
-          </span>
+          <Link
+            to="/map"
+            className="inline-flex items-center gap-1 text-[11px] font-medium text-indigo-600 hover:text-indigo-800 pt-1"
+          >
+            <span>Explore Campus Map</span>
+            <span>&rarr;</span>
+          </Link>
         </div>
       </div>
 
