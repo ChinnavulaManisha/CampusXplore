@@ -202,7 +202,7 @@ class FacilityAPITests(APITestCase):
         self.facility_active = Facility.objects.create(
             name='Central Library Reading Room',
             category=self.category_academic,
-            building='Block 34',
+            building='Block 37',
             latitude=Decimal('31.253000'),
             longitude=Decimal('75.704000'),
             is_active=True
@@ -397,9 +397,10 @@ class FacilityAPITests(APITestCase):
 
     def test_filter_facilities_by_building(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.student_token}')
-        res = self.client.get(f'{self.facilities_url}?building=Block 34')
+        res = self.client.get(f'{self.facilities_url}?building=Block 37')
+        self.assertEqual(len(res.data['results']), 1)
         for f in res.data['results']:
-            self.assertIn('Block 34', f['building'])
+            self.assertIn('Block 37', f['building'])
 
     def test_search_facilities(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.student_token}')
@@ -479,7 +480,7 @@ class FacilityAPITests(APITestCase):
         payload = {
             'name': 'central library reading room',  # Case variation of existing active facility
             'category_id': self.category_academic.id,
-            'building': 'block 34'  # Case variation of existing building
+            'building': 'block 37'  # Case variation of existing building
         }
         res = self.client.post(self.facilities_url, payload, format='json')
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)

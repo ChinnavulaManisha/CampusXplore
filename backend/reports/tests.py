@@ -120,7 +120,7 @@ class IssueReportAPITests(APITestCase):
         self.active_facility = Facility.objects.create(
             name='Central Library Reading Hall',
             category=self.category,
-            building='Block 34',
+            building='Block 37',
             is_active=True
         )
         self.inactive_facility = Facility.objects.create(
@@ -536,7 +536,7 @@ class IssueReportAPITests(APITestCase):
         IssueReport.objects.create(
             user=self.student_a,
             facility=self.active_facility,
-            title='Water Leak Block 34',
+            title='Water Leak Block 37',
             description='Water leaking in washroom.',
             issue_type=IssueType.WATER,
             status=IssueStatus.PENDING
@@ -544,7 +544,7 @@ class IssueReportAPITests(APITestCase):
         IssueReport.objects.create(
             user=self.student_a,
             facility=self.active_facility,
-            title='Power Cut Block 34',
+            title='Power Cut Block 37',
             description='Power cut in library.',
             issue_type=IssueType.ELECTRICAL,
             status=IssueStatus.IN_PROGRESS

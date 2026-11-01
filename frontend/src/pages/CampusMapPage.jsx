@@ -235,7 +235,7 @@ export default function CampusMapPage() {
               <Building2 className="w-4 h-4 absolute left-3.5 top-3 text-slate-400" />
               <input
                 type="text"
-                placeholder="Filter building (e.g. Block 34)..."
+                placeholder="Filter building (e.g. Block 37)..."
                 value={buildingInput}
                 onChange={(e) => setBuildingInput(e.target.value)}
                 className="w-full pl-9 pr-3.5 py-2 text-sm rounded-lg border border-slate-300 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 bg-white"

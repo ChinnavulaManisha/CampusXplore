@@ -59,7 +59,7 @@ export default function FacilityModal({
     const errs = {};
     if (!name.trim()) errs.name = 'Facility name is required.';
     if (!categoryId) errs.categoryId = 'Please select a category.';
-    if (!building.trim()) errs.building = 'Building identifier is required (e.g. Block 34).';
+    if (!building.trim()) errs.building = 'Building identifier is required (e.g. Block 37).';
 
     if (latitude && (isNaN(Number(latitude)) || Number(latitude) < -90 || Number(latitude) > 90)) {
       errs.latitude = 'Latitude must be between -90 and 90.';
@@ -212,7 +212,7 @@ export default function FacilityModal({
                   setBuilding(e.target.value);
                   if (validationErrors.building) setValidationErrors((p) => ({ ...p, building: undefined }));
                 }}
-                placeholder="e.g. Block 34, 2nd Floor"
+                placeholder="e.g. Block 37, 2nd Floor"
                 className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 bg-white focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
               />
               {validationErrors.building && (
