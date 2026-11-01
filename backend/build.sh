@@ -7,3 +7,9 @@ pip install -r requirements.txt
 
 # Collect static files for WhiteNoise
 python manage.py collectstatic --noinput
+
+# Apply database migrations
+python manage.py migrate --noinput
+
+# Seed default categories if not already present
+python manage.py seed_categories
