@@ -13,3 +13,6 @@ python manage.py migrate --noinput
 
 # Seed default categories if not already present
 python manage.py seed_categories
+
+# Seed initial campus facilities (Central Library in Block 37, sports, academic, dining)
+python manage.py seed_facilities
