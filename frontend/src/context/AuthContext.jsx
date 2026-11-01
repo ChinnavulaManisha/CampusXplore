@@ -121,7 +121,12 @@ export const AuthProvider = ({ children }) => {
       let errorMsg = null;
       if (data) {
         if (typeof data === 'string' && data.trim()) {
-          errorMsg = data.trim();
+          const trimmed = data.trim();
+          if (trimmed.startsWith('<!doctype') || trimmed.startsWith('<html') || trimmed.includes('<title>Server Error')) {
+            errorMsg = 'The server encountered an internal error. Please ensure database migrations have been applied.';
+          } else {
+            errorMsg = trimmed;
+          }
         } else if (typeof data === 'object') {
           // Check standard DRF fields according to error precedence
           errorMsg =
