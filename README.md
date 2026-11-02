@@ -9,7 +9,8 @@ Proud to share my latest project: **CampusXplore**, a modern full-stack web appl
 <img width="1000" height="500" alt="CampusXplore Landing Page" src="https://via.placeholder.com/1000x500.png?text=CampusXplore+Landing+Page" />
 
 ## 🔐 Login & Authentication:
-<img width="1000" height="500" alt="Login & Role Selection" src="https://via.placeholder.com/1000x500.png?text=CampusXplore+Login+Page" />
+<img width="1912" height="915" alt="image" src="https://github.com/user-attachments/assets/21257b76-286e-4284-a1cc-b2d32bda9eab" />
+
 
 ## 🗺️ Interactive Campus Map & Facilities:
 <img width="1000" height="500" alt="Campus Map & Facilities Directory" src="https://via.placeholder.com/1000x500.png?text=CampusXplore+Interactive+Map+%26+Facilities" />
