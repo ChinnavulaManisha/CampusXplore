@@ -6,17 +6,22 @@ Proud to share my latest project: **CampusXplore**, a modern full-stack web appl
 
 <!-- Place your screenshots below: replace image URLs with your uploaded GitHub assets or screenshots -->
 ## 🌟 Landing Page:
-<img width="1000" height="500" alt="CampusXplore Landing Page" src="https://via.placeholder.com/1000x500.png?text=CampusXplore+Landing+Page" />
+<img width="1891" height="865" alt="image" src="https://github.com/user-attachments/assets/84189a06-40d2-424b-8e98-83ac20f35d94" />
+
 
 ## 🔐 Login & Authentication:
 <img width="1912" height="915" alt="image" src="https://github.com/user-attachments/assets/21257b76-286e-4284-a1cc-b2d32bda9eab" />
 
 
 ## 🗺️ Interactive Campus Map & Facilities:
-<img width="1000" height="500" alt="Campus Map & Facilities Directory" src="https://via.placeholder.com/1000x500.png?text=CampusXplore+Interactive+Map+%26+Facilities" />
+<img width="1895" height="858" alt="image" src="https://github.com/user-attachments/assets/c5265037-2a06-4e78-aeea-d29e48ebaf16" />
+<img width="1912" height="862" alt="image" src="https://github.com/user-attachments/assets/9c1175e0-782d-4e81-90e1-ccd2f3c11e38" />
+
+
 
 ## 📊 Role-Based Dashboards & Issue Reporting:
-<img width="1000" height="500" alt="Dashboards & Issue Management" src="https://via.placeholder.com/1000x500.png?text=CampusXplore+Dashboards+%26+Issue+Reporting" />
+<img width="1891" height="856" alt="image" src="https://github.com/user-attachments/assets/9533d9a5-8a9a-45aa-9941-1494fcf295ca" />
+
 
 ---
 
