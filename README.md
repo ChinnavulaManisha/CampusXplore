@@ -1,6 +1,6 @@
 # 🏫 CAMPUSXPLORE – SMART CAMPUS NAVIGATION & FACILITY MANAGEMENT SYSTEM 📍✨
 
-Proud to share my latest project: **CampusXplore**, a modern full-stack web application engineered to revolutionize campus navigation and facility operations at **Lovely Professional University (LPU)**. Navigating an extensive university campus with dozens of academic blocks, departments, laboratories, hostels, food courts, and libraries can often be challenging for students, faculty, and new visitors. Moreover, reporting broken infrastructure or facility issues traditionally involves tedious paperwork and slow response times. 
+**CampusXplore**, a modern full-stack web application engineered to revolutionize campus navigation and facility operations at **Lovely Professional University (LPU)**. Navigating an extensive university campus with dozens of academic blocks, departments, laboratories, hostels, food courts, and libraries can often be challenging for students, faculty, and new visitors. Moreover, reporting broken infrastructure or facility issues traditionally involves tedious paperwork and slow response times. 
 
 **CampusXplore** solves this by providing interactive campus navigation, a centralized facility directory, role-based dashboards, and an automated issue reporting and tracking system — making campus exploration effortless and facility maintenance fast and transparent! 🎓🗺️🛠️
 
