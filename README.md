@@ -11,7 +11,8 @@ Proud to share my latest project: **CampusXplore**, a modern full-stack web appl
 
 ## 🔐 Login & Authentication:
 <img width="1912" height="915" alt="image" src="https://github.com/user-attachments/assets/21257b76-286e-4284-a1cc-b2d32bda9eab" />
-<img width="1890" height="860" alt="image" src="https://github.com/user-attachments/assets/be16ddfb-3090-4dfe-a5b4-39fe2425fd7c" />
+<img width="1890" height="860" alt="image" src="https://github.com/user-attachments/assets/80daa242-9af4-4ec1-a009-d5b83425640a" />
+
 
 
 
