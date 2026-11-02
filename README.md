@@ -23,7 +23,8 @@
 
 
 ## 📊 Role-Based Dashboards & Issue Reporting:
-<img width="1891" height="856" alt="image" src="https://github.com/user-attachments/assets/9533d9a5-8a9a-45aa-9941-1494fcf295ca" />
+<img width="1897" height="856" alt="image" src="https://github.com/user-attachments/assets/460c37af-667a-492b-851c-3cf07dfe2490" />
+
 
 
 ---
